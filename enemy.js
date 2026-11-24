@@ -1,5 +1,5 @@
 // 敵：作る・入れる・動かす・描く（足すものの形）
-
+const MAX_ENEMIES = 6;   // 敵は、同時にこの数まで
 // ① 作る：敵を1体作って返す関数（呼ぶたびに、新しい敵が1体できる）
 function createEnemy(x, vx,kind) {   //kindで敵の種類を変えられるようにしている
   return { x: x, y: floor.y - 32, w: 32, h: 32, vx: vx, alive: true, kind: kind, turnTimer: 0.8 + Math.random() * 2 };    //0.8〜2.8秒の間でランダムな値を最初に設定
@@ -7,6 +7,8 @@ function createEnemy(x, vx,kind) {   //kindで敵の種類を変えられるよ�
 
 // ② 入れる：敵をまとめて入れる配列（７-６で入れ直すので let）
 let enemies = [];
+let spawnTimer = 0;   // 敵を出すタイマー
+let nextSpawn = 2;    // 次の敵を出すまでの時間（秒）
 
 // 最初の敵を入れ直す（★ main.js の resetGame から呼ばれる）
 function resetEnemies() {
@@ -16,6 +18,25 @@ function resetEnemies() {
   enemies.push(createEnemy(540, 60));
   enemies.push(createEnemy(680, 90, "fickle"));
   // ↑ 授業でくじの敵を足した人は、その行（const special = … から enemies.push(special); まで）もここへ
+  spawnTimer = 0;
+  nextSpawn = 2;
+}
+
+// 敵を時間で出す（タイマーの形・くり返す）
+function spawnEnemies(dt) {
+  spawnTimer = spawnTimer + dt;
+  if (spawnTimer >= nextSpawn) {
+    if (enemies.length < MAX_ENEMIES) {
+      // 左の端か右の端か、くじで決める
+      if (Math.random() < 0.5) {
+        enemies.push(createEnemy(0, 100));                    // 左の端から、右へ
+      } else {
+        enemies.push(createEnemy(canvas.width - 32, -100));   // 右の端から、左へ
+      }
+    }
+    spawnTimer = 0;
+    nextSpawn = 1 + Math.random() * 2;   // 次は 1〜3 秒のどれか
+  }
 }
 
 // ③ 動かす：配列の敵を1体ずつ取り出して、同じ処理をする
