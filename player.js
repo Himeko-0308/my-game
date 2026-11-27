@@ -5,8 +5,8 @@ const JUMP_SPEED = 700;
 const MOVE_SPEED = 240;
 const MAX_JUMPS = 2;          // 地面を離れてから跳べる回数（2段ジャンプ）
 const FALL_GRAVITY_RATE = 2;  // 落ちるときは、重力を何倍にするか
-const MAX_HP = 3;             // HP の最大
-const HIT_TIME = 1;           // 当たってから、当たらない時間（秒）
+const MAX_HP = 5;             // HP の最大
+const HIT_TIME = 1.5;           // 当たってから、当たらない時間（秒）
 
 const player = { x: 80, y: 20, w: 32, h: 32, vx: 0, vy: 0, isGrounded: false, jumpsLeft: MAX_JUMPS, state: "idle", frameIndex: 0, frameTimer: 0, facing: 1 ,hp: MAX_HP, hitTimer: 0};
 // 最初の値に戻す（★ main.js の resetGame から呼ばれる）
@@ -112,6 +112,20 @@ function updatePlayer(dt) {
   // 当たらない時間（タイマーの形・続ける）：残っている間は、dt だけ減らす
   if (player.hitTimer > 0) {
     player.hitTimer = player.hitTimer - dt;
+  }
+
+  // 画面の左右・上から出ないように位置を戻す
+  if (player.x < 0) {
+    player.x = 0;
+  }
+  if (player.x + player.w > canvas.width) {
+    player.x = canvas.width - player.w;
+  }
+  if (player.y < 0) {
+    player.y = 0;
+    if (player.vy < 0) {
+      player.vy = 0; // 天井に当たったら上向きの勢いを消す（任意）
+    }
   }
 }
 
