@@ -87,7 +87,7 @@ function draw() {
     drawMessage("PAUSE", "P でつづける");
   }
   if (gameState === "gameover") {
-    drawMessage("GAME OVER","SCORE " + score + "Enter かクリックでもう一度");
+    drawMessage("GAME OVER","SCORE " + score + " Enter かクリックでもう一度");
   }
   drawEnemies();
   drawHud();
